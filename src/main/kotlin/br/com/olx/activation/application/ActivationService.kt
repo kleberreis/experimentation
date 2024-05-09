@@ -7,6 +7,9 @@ import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.lang.RuntimeException
+import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.kafka.support.Acknowledgment
 
 @Service
 class ActivationService(
@@ -23,8 +26,11 @@ class ActivationService(
         }catch (e: Exception){
             println("mensagem não enviada pra fila")
         }
-
-
+    }
+    @KafkaListener(topics = ["\${kafka.topics.product}"], groupId = "ppr")
+    fun listenGroupFoo(consumerRecord: ConsumerRecord<Any, Any>, ack: Acknowledgment) {
+        println("Message received ${consumerRecord}")
+        ack.acknowledge()
     }
 
 
